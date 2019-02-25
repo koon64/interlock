@@ -1,0 +1,77 @@
+# Interlock config file
+
+interlock_information:
+  version: 2.0
+server:
+  ip_address: "192.168.0.155"
+  port: 64
+services:
+  - service_name: "hue"
+    bridge_ip: "192.168.0.135"
+    rooms:
+      bedroom:
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+        - 8
+        - 9
+        - 10
+        - 11
+        - 14
+        - 15
+        - 16
+        - 17
+        - 18
+      bathroom:
+        - 12
+        - 13
+  - service_name: "play_music"
+    oauth: "33e20d31e6917cc5"
+rooms:
+  - name: "bedroom"
+    label: "Bedroom"
+    image: "https://lh3.googleusercontent.com/d-eDk0w6y-z1x6iU2ppUkkshOVOauuEnyBsSfJARum5_I0bwAFNuUCXJznWnZ2fpelgiHelKiaCxh3eFdVSol40CHYVjPVazjEkujppB1p1RCVt14z6v10NTy3xHv2_Jg2k53yjRuElot_5Efj7d8j2nfYrhf9EWLQs3BsP80227_EILZRrWvjiTg4bXDZ0ucjkDegZYzGTvcT22tnwQiMS4HtfWVGXVTlWLVPknAA1hxrUWAONIYDC-lUMWoqq2QDuluVqSESxoxiq18ZPCCY91GMBK6n2EfX_QaZnBvZZ17Iw_MNDj0hDBpZ0plZmO6G0hyKETCi44EV8FCF-VJmGUoUtqJkGK6IWc52otspBTEQi4UoMiDDRIz5pbtoEKJ38pUWosek_UdPcMGB2bKoP8-xpDQTajm3q3Eh52yQe2NQtVzXfnl9cYFFM3gvXVhGU4hljVikTEPVOqa-I1zqvZ2LK3PaaAz0uitjHdIWJEa1R97Xt_wPZDSArUN0kb_Ha8V0s8l4RfRwr4HFayE0LZGf51Ih3a0LDIMB6OxfSb4x5oI79poDNZb0lYp_UQUfrHrXI6CCiUoiSJFSyTtP2_xu1kdXKnXgl9Gl6Z2oFmrkMfbew9NuW4OzO5egP3dOgD_5H8YcbCFNOPzhvUfI92iyTdJQPb=w1423-h949-no"
+    main: true
+    svg: "bed"
+  - name: "bathroom"
+    label: "Bathroom"
+    image: "https://lh3.googleusercontent.com/d-eDk0w6y-z1x6iU2ppUkkshOVOauuEnyBsSfJARum5_I0bwAFNuUCXJznWnZ2fpelgiHelKiaCxh3eFdVSol40CHYVjPVazjEkujppB1p1RCVt14z6v10NTy3xHv2_Jg2k53yjRuElot_5Efj7d8j2nfYrhf9EWLQs3BsP80227_EILZRrWvjiTg4bXDZ0ucjkDegZYzGTvcT22tnwQiMS4HtfWVGXVTlWLVPknAA1hxrUWAONIYDC-lUMWoqq2QDuluVqSESxoxiq18ZPCCY91GMBK6n2EfX_QaZnBvZZ17Iw_MNDj0hDBpZ0plZmO6G0hyKETCi44EV8FCF-VJmGUoUtqJkGK6IWc52otspBTEQi4UoMiDDRIz5pbtoEKJ38pUWosek_UdPcMGB2bKoP8-xpDQTajm3q3Eh52yQe2NQtVzXfnl9cYFFM3gvXVhGU4hljVikTEPVOqa-I1zqvZ2LK3PaaAz0uitjHdIWJEa1R97Xt_wPZDSArUN0kb_Ha8V0s8l4RfRwr4HFayE0LZGf51Ih3a0LDIMB6OxfSb4x5oI79poDNZb0lYp_UQUfrHrXI6CCiUoiSJFSyTtP2_xu1kdXKnXgl9Gl6Z2oFmrkMfbew9NuW4OzO5egP3dOgD_5H8YcbCFNOPzhvUfI92iyTdJQPb=w1423-h949-no"
+    main: false
+    svg: "bath"
+
+scenes:
+  - id: "peace"
+    label: "Peace"
+    room: "bedroom"
+    instructions:
+      - device: "Tall light"
+        command: "set_state"
+        state: 1
+
+
+
+
+
+devices:
+
+  - id: "Tall light"
+    label: "Tall Light"
+    type: "switch"
+    service: "wemo"
+    room: "bedroom"
+
+  - id: "Speakers"
+    label: "Speakers"
+    type: "speakers"
+    service: "chromecast"
+    room: "bedroom"
+
+  - id: "Bedroom display"
+    label: "Bedroom Display"
+    type: "screen"
+    service: "chromecast"
+    room: "bedroom"
