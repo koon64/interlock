@@ -232,7 +232,49 @@ class Serv(BaseHTTPRequestHandler):
                     else:
                         response = "unknown device"
             elif url_parts[2] == "media":
-                pass
+                # media interface, mostly for selecting media
+                services = interlock.get_media_services()  # gets all the connected services
+                if len(url_parts) == 3:  # only if there are 3 words
+                    return_services = []
+                    for service in services:
+                        service = service.information  # loads the media service information object
+                        return_services.append({
+                            "name": service.name,
+                            "label": service.label,
+                            "icon": service.icon,
+                            "type": service.type
+                        })
+                    # returns all the services in array format to be converted into json
+                    response = {"services": return_services}
+                else:
+                    valid_service = False  # base variable for a valid service
+                    for service in services:
+                        if service.information.name == url_parts[3]:  # if the service name matches the given name
+                            valid_service = True
+                            if len(url_parts) > 4:
+                                if url_parts[4] == "library":
+                                    # library loads albums and playlists
+                                    # todo: this should sort by most played
+                                    album_objs = service.get_albums()  # gets all the albums in library
+                                    media = []
+                                    for album in album_objs:
+                                        media.append({
+                                            "type": "album",
+                                            "name": album.name,
+                                            "artist": album.artist,
+                                            "image": album.image,
+                                            "year": album.year
+                                        })
+                                    playlist_objs = service.get_playlists()
+                                    for playlist in playlist_objs:
+                                        media.append({
+                                            "type": "playlist",
+                                            "name": playlist.name,
+                                            "images": playlist.thumbnails
+                                        })
+                                    response = {"media": media}
+                    if not valid_service:
+                        response = str(url_parts[3]) + " is not a media service that is set up"
         if response != "unknown api request":
             code = 200
         return response, code
@@ -263,6 +305,7 @@ class Serv(BaseHTTPRequestHandler):
         self.end_headers()
         if file_to_open is not None:
             self.wfile.write(bytes(file_to_open, 'utf-8'))
+
 
 if __name__ == '__main__':
     httpd = HTTPServer((interlock.server_ip, interlock.server_port), Serv)

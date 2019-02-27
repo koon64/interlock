@@ -1,6 +1,6 @@
 import threading
 import time
-from lib.InterlockStandardFormats import InterlockMedia
+from lib.InterlockStandardFormats import InterlockSong
 
 
 class Command:
@@ -58,16 +58,16 @@ class MediaService:
     def play(self, media=None):
         self.paused = False
         if media is not None:
-            if type(media) == InterlockMedia:
+            if type(media) == InterlockSong:
                 media = [media]
             elif type(media) == list:
                 if type(media[0]) == str:
                     new_media = []
                     for url in media:
-                        new_media.append(InterlockMedia(url, 'Unknown', 'Unknown'))
+                        new_media.append(InterlockSong(url, 'Unknown', 'Unknown'))
                     media = new_media
             elif type(media) == str:
-                media = [InterlockMedia(media, 'Unknown', 'Unknown')]
+                media = [InterlockSong(media, 'Unknown', 'Unknown')]
             self.queue = media
             self.queue_position = 0
             item = media[0]

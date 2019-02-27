@@ -332,6 +332,70 @@ label#scene_id {
     margin-bottom: 15px;
 }
 
+.media_section{
+    display: none;
+}
+.section_header img {
+    height: 20px;
+    margin-right: 8px;
+    margin-bottom: -3px;
+    margin-top: 8px;
+}
+
+.section_header label {
+    position: relative;
+    font-size: 16px;
+}
+
+.card.music_item {padding: 0;overflow: hidden;}
+
+.card.music_item > img {
+    height: 150px;
+    width: 150px;
+    display: block;
+}
+
+.music_item_info > h1 {
+    font-size: 16px;
+    font-weight: normal;
+    margin: 6px 0;
+}
+
+.music_item_info > h2 {
+    font-size: 12px;
+    margin: 0;
+    color: #666;
+}
+
+.image_row > img {
+    height: 75px;
+    display: block;
+}
+
+.image_grid {
+    height: 150px;
+}
+
+.image_row {
+    display: flex;
+}
+
+.card.music_item > .music_item_info {
+    width: 150px;
+    background-image: linear-gradient(transparent, black);
+    color: #fff;
+    z-index: 10;
+    position: relative;
+}
+
+
+
+
+
+
+
+
+
 
 .header {
     height: 20vh;

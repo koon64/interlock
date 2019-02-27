@@ -1,5 +1,5 @@
 import soco
-from lib.InterlockStandardFormats import InterlockMedia
+from lib.InterlockStandardFormats import InterlockSong
 
 
 class SonosService:
@@ -51,7 +51,7 @@ class SonosSpeaker:
     def get_media(self):
         track = self.speaker.get_current_track_info()
         print(track)
-        return InterlockMedia(None, track['title'], track['album_art'], track['artist'], track['album'])
+        return InterlockSong(None, track['title'], track['album_art'], track['artist'], track['album'])
 
     def get_state(self):
         return self.speaker.get_current_transport_info()['current_transport_state']

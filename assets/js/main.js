@@ -16,7 +16,8 @@ let icon_svgs =
     },
     interlock_content =
     {
-        rooms:[]
+        rooms:[],
+        media_services: {}
     },
     current_room = null,
     interface =
@@ -100,7 +101,7 @@ function loadRoom(room_content){
 
     updateSceneSelector(room_content.current_scene); // sets the button click events and sets the selected scene
 
-    updateDevices(room_content.devices);
+    updateDevices(room_content.devices); // updates the devices in the room
 
 }
 
@@ -258,13 +259,17 @@ function updateScene(scene_id){
     slider.css("margin-left", left+"px"); // sets the slider distance from the left
 }
 
+// sets a scene by sending a request to the server
+
 function setScene(scene_id){
     url = "rooms/"+interlock_content.current_room+"/"+scene_id;
     apiRequest(url, function(){
         console.log("success");
     })
 }
+
 // sets the interface theme
+
 function setInterfaceTheme(theme){
     interface.theme = theme;
     let body = $("body"),
@@ -279,13 +284,70 @@ function setInterfaceTheme(theme){
         theme_svg = "sun";
         theme_name = "Light Theme";
     }
-    theme_html = icon_svgs[theme_svg]+theme_name;
+    let theme_html = icon_svgs[theme_svg]+theme_name;
     $(".theme_selector").html(theme_html);
+}
+
+// loads the media services
+
+function loadMediaServices(){
+    apiRequest("media", function (r) {
+        let services = r.services;
+        if (services.length > 0){
+            for (let i in services){
+                let service = services[i];
+                loadMediaService(service);
+            }
+        }
+    })
+}
+
+// sets up and loads everything for a service
+
+function loadMediaService(service){
+    interlock_content.media_services[service.name] = service; // sets it up in the media service variable
+    if (service.type === "music"){
+        loadMusicService(service);
+    }
+
+}
+
+// sets up and loads a music service
+
+function loadMusicService(service){
+    let media_section = $(".media_section");
+    media_section.children(".section_header").append('<img class="icon" src="'+service.icon+'"><label>'+service.label+'</label>');
+    media_section.show();
+    $(".music").html("loading...");
+    apiRequest("media/"+service.name+"/library", function (r) {
+        let media = r.media,
+            media_html = '',
+            sub_info = '';
+        for (let i in media){
+            let item = media[i],
+                image = '';
+            console.log(item);
+            if (item.type === "album"){
+                image = '<img src="'+item.image+'">';
+                sub_info = '<h2>'+item.artist+'</h2>';
+            } else if (item.type === "playlist"){
+                image = '<div class="image_grid"><div class="image_row"><img src="'+item.images[0]+'"><img src="'+item.images[1]+'"></div><div class="image_row"><img src="'+item.images[2]+'"><img src="'+item.images[3]+'"></div> </div>';
+            }
+            media_html += '<div class="card music_item">'+image+'<div class="music_item_info"> <h1>'+item.name+'</h1>'+sub_info+'</div></div>';
+        }
+        $(".music").html(media_html);
+        let items = $(".music_item_info");
+        for (i in items){
+
+        }
+    })
 }
 
 $(document).ready(function(){
     // loads all the rooms from the server
     loadRooms();
+    // loads the media services
+    loadMediaServices();
     // sets the interface type
     setInterfaceTheme(interface.theme);
     // sets the click event

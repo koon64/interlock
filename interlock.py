@@ -43,6 +43,7 @@ class Interlock:
         # object variables
         self.rooms = []
         self.scenes = []
+        self.media_services = []
         # if config file is passed
         if config_file is not None:
             with open(config_file, 'r') as file:  # opens the json file
@@ -111,6 +112,7 @@ class Interlock:
                             elif service['service_name'] == 'play_music':
                                 try:
                                     self.play_music = PlayMusicService(service['oauth'])
+                                    self.media_services.append(self.play_music)
                                 except:
                                     print("could not connect to play music")
                                     # creates all the scenes for the rooms
@@ -180,3 +182,6 @@ class Interlock:
         with open(self.config_file_path, 'w') as file:
             json.dump(config, file)
             print("file changed")
+
+    def get_media_services(self):
+        return self.media_services

@@ -1,5 +1,5 @@
 import pychromecast
-from lib.InterlockStandardFormats import InterlockMedia
+from lib.InterlockStandardFormats import InterlockSong
 
 
 class ChromecastService:
@@ -76,6 +76,6 @@ class ChromecastDevice:
                 image = image_obj.url
             else:
                 image = None
-            return InterlockMedia(None, title, image)
+            return InterlockSong(None, title, image)
         return None
 
