@@ -353,6 +353,7 @@ label#scene_id {
     height: 150px;
     width: 150px;
     display: block;
+    transition: .3s;
 }
 
 .music_item_info > h1 {
@@ -364,7 +365,7 @@ label#scene_id {
 .music_item_info > h2 {
     font-size: 12px;
     margin: 0;
-    color: #666;
+    color: #dadada;
 }
 
 .image_row > img {
@@ -374,6 +375,7 @@ label#scene_id {
 
 .image_grid {
     height: 150px;
+    transition: .3s;
 }
 
 .image_row {
@@ -381,15 +383,20 @@ label#scene_id {
 }
 
 .card.music_item > .music_item_info {
-    width: 150px;
+    width: 130px;
     background-image: linear-gradient(transparent, black);
     color: #fff;
     z-index: 10;
+    padding: 10px;
     position: relative;
 }
+.card.music_item:hover > img {
+    transform: scale(1.05);
+}
 
-
-
+.card.music_item:hover > .image_grid {
+    transform: scale(1.05);
+}
 
 
 

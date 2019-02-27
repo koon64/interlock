@@ -336,14 +336,20 @@ function loadMusicService(service){
             media_html += '<div class="card music_item">'+image+'<div class="music_item_info"> <h1>'+item.name+'</h1>'+sub_info+'</div></div>';
         }
         $(".music").html(media_html);
-        let items = $(".music_item_info");
-        for (i in items){
-
+        let items = document.getElementsByClassName("music_item_info");
+        for (let i in items){
+            let item = items[i];
+            if (typeof item == "object"){
+                let height = item.clientHeight;
+                item.style.marginTop = "-"+height.toString()+"px";
+            }
         }
     })
 }
 
-$(document).ready(function(){
+// main function
+
+function main(){
     // loads all the rooms from the server
     loadRooms();
     // loads the media services
@@ -359,4 +365,9 @@ $(document).ready(function(){
             setInterfaceTheme("dark");
         }
     });
+}
+
+$(document).ready(function(){
+    // loads the main function
+    main();
 });
