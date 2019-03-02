@@ -90,26 +90,94 @@ class Room:
         for device in self.devices:
             device.turn_on()
 
+    # turns all the lights off in a room
     def turn_off_lights(self):
         for light in self.lights:
             light.turn_off()
 
+    # turns all the lights on in a room
     def turn_on_lights(self):
         for light in self.lights:
             light.turn_on()
 
+    # sets the brightness of a room
     def set_brightness(self, brightness):
+        # loops through each light from the room
         for light in self.lights:
-            light.set_brightness(brightness)
+            light.set_brightness(brightness)  # sets the brightness to the night
 
+    # sets the room to be main
     def set_main(self):
-        self.main = True
+        self.main = True  # sets this room to main
+        # loops through all the other rooms in the interlock class
         for room in self.interlock.get_rooms():
-            if room.room_name != self.room_name:
-                room.main = False
+            if room.room_name != self.room_name:  # if it is not the current room
+                room.main = False  # sets main to false
 
+    # returns a scene object from a room
     def get_scene(self, scene_id):
         for scene in self.scenes:
             if scene.id == scene_id:
                 return scene
         return None
+
+    # returns a string of the status of the room
+    def get_status_string(self):
+        # defines some starting variables
+        string_parts = []
+        status_string = ""
+        lights_on = 0
+        lights_off = 0
+
+        playing_media = []
+        # collects all the status information and changes the vars
+        # lights
+        # todo: tidy this up a bit
+        b = False
+        for light in self.lights:
+            if light.service == 'hue' and not b:
+                light.get_state()
+                b = True
+            if light.on or light.on == 1:
+                lights_on += 1
+            else:
+                lights_off += 1
+        # speakers and displays
+        for device in self.devices:
+            if device.type == "display" or device.type == "speaker":
+                media = device.get_media()
+                if media is not None:
+                    playing_media.append({
+                        "device": device,
+                        "media": media
+                    })
+        # puts the vars into a string
+        # lights
+        if lights_on == 0:
+            string_parts.append("all the lights are off")
+        elif lights_off == 0:
+            string_parts.append("all the lights are on")
+        # speakers and displays
+        if len(playing_media) == 0:
+            string_parts.append("nothing is currently playing")
+        else:
+            for instance in playing_media:
+                device_label = instance['device'].label
+                media = instance['media']
+                title = media.title
+                artist = media.artist
+                string_parts.append(device_label + " is playing " + title + " by " + artist)
+        # join all the string parts together
+        string_count = 0
+        for string in string_parts:
+            string_count += 1
+            status_string += string
+            if string_count != len(string_parts):
+                if string_count + 1 == len(string_parts):
+                    status_string += ", and "
+                else:
+                    status_string += ", "
+        status_string = status_string.capitalize()
+        status_string += "."
+        return status_string
+

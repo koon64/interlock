@@ -1,5 +1,6 @@
 from ouimeaux.environment import Environment
 from xml.etree.ElementTree import fromstring
+from time import sleep
 
 
 class WemoService:
@@ -15,8 +16,17 @@ class WemoService:
     def get_devices(self):
         return self.devices
 
-    def device(self, name):
-        return WemoDevice(self.env, name)
+    def device(self, name, attempts=0):
+        try:
+            return WemoDevice(self.env, name)
+        except:
+            if attempts < 3:
+                print(name + ' was not found, trying in 3 seconds')
+                sleep(3)
+                attempts += 1
+                self.device(name, attempts)
+            else:
+                raise Exception(name + ' could not be found')
 
 
 class WemoDevice:

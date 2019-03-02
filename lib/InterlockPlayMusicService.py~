@@ -1,6 +1,5 @@
 from gmusicapi import Mobileclient
 from lib.InterlockStandardFormats import *
-from re import compile
 
 
 class PlayMusicService:
@@ -15,10 +14,6 @@ class PlayMusicService:
 
     def get_library(self):
         return self.api.get_all_songs()
-
-    def remove_special_characters(self, string):
-        regex = compile('[^a-zA-Z]')
-        return regex.sub('', string)
 
     def get_albums(self):
         library = self.get_library()
@@ -44,23 +39,10 @@ class PlayMusicService:
                 return_albums.append(album_obj)
         return return_albums
 
-    def get_album(self, album_name):
-        album_name = self.remove_special_characters(album_name)
-        albums = self.get_albums()
-        album = None
-        for alb in albums:
-            if self.remove_special_characters(alb.name) == album_name:
-                album = alb
-        return album
-
-    def get_playlist(self, playlist_name):
-        playlist_name = self.remove_special_characters(playlist_name)
-        playlist = None
+    def get_playlist(playlist_name):
         playlists = self.get_playlists()
-        for pl in playlists:
-            if self.remove_special_characters(pl.name) == playlist_name:
-                playlist = pl
-        return playlist
+        playlist = next(pl for pl in playlists if pl.title == playlist_name)
+        print(playlist)
 
     def get_playlists(self):
         playlists = self.api.get_all_user_playlist_contents()
@@ -92,10 +74,9 @@ class PlayMusicService:
                 title = track['title']
                 image = track['albumArtRef'][0]['url']
                 artist = track['artist']
-                album_position = track['trackNumber']
                 seconds = int(track['durationMillis']) / 1000
                 track_obj = InterlockSong(None, title, image, artist, play_music_id=track_id, play_music_class=self,
-                                          duration_seconds=seconds,album_position=album_position)
+                                          duration_seconds=seconds)
                 track_objs.append(track_obj)
         return track_objs
 

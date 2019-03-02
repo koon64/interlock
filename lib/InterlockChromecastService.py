@@ -69,13 +69,14 @@ class ChromecastDevice:
     def get_media(self):
         if self.mc is not None:
             status = self.mc.status
-            print(status)
             title = status.title
-            if len(status.images) != 0:
-                image_obj = status.images[0]
-                image = image_obj.url
-            else:
-                image = None
-            return InterlockSong(None, title, image)
+            if title is not None:
+                if len(status.images) != 0:
+                    image_obj = status.images[0]
+                    image = image_obj.url
+                else:
+                    image = None
+                return InterlockSong(None, title, image)
+            return None
         return None
 

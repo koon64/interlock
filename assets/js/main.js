@@ -89,6 +89,8 @@ function loadRoom(room_content){
 
     $("#room_name").html(room_content.label); // loads the room name
 
+    $("#room_info").html(room_content.status_string) // loads the room status string
+
     $(".room_item.selected").removeClass("selected"); // removes all the active classes
 
     $(".room_item[data-room_id='"+room_content.id+"']").addClass("selected"); // sets the room to selected from the room id
@@ -262,40 +264,50 @@ function updateScene(scene_id){
 // sets a scene by sending a request to the server
 
 function setScene(scene_id){
+    // sets the url of the request
     url = "rooms/"+interlock_content.current_room+"/"+scene_id;
     apiRequest(url, function(){
-        console.log("success");
     })
 }
 
 // sets the interface theme
 
 function setInterfaceTheme(theme){
+    // sets the local var of the theme
     interface.theme = theme;
-    let body = $("body"),
-        theme_svg = null,
-        theme_name = null;
+    // defines some vars
+    let body = $("body"), // body element
+        theme_svg = null, // the theme icon
+        theme_name = null; // the theme name
     if (theme === "dark"){
+        // dark theme
         body.addClass("dark");
         theme_svg = "moon";
         theme_name = "Dark Theme";
     } else {
+        // light theme
         body.removeClass("dark");
         theme_svg = "sun";
         theme_name = "Light Theme";
     }
+    // defines theme html code
     let theme_html = icon_svgs[theme_svg]+theme_name;
+    // updates the button with the new html
     $(".theme_selector").html(theme_html);
 }
 
 // loads the media services
 
 function loadMediaServices(){
+    // sends a request to the server for the media
     apiRequest("media", function (r) {
-        let services = r.services;
+        let services = r.services; // the services array
+        // if it is not empty
         if (services.length > 0){
             for (let i in services){
+                // defines the service as a var
                 let service = services[i];
+                // calls the media service with the var
                 loadMediaService(service);
             }
         }
@@ -305,8 +317,10 @@ function loadMediaServices(){
 // sets up and loads everything for a service
 
 function loadMediaService(service){
-    interlock_content.media_services[service.name] = service; // sets it up in the media service variable
+    // adds the service to the interlock_content var
+    interlock_content.media_services[service.name] = service;
     if (service.type === "music"){
+        // if it is a music service then load the music service function
         loadMusicService(service);
     }
 
@@ -315,32 +329,48 @@ function loadMediaService(service){
 // sets up and loads a music service
 
 function loadMusicService(service){
+    // defines the selector of the media
     let media_section = $(".media_section");
+    // add the service information such as the name and icon
     media_section.children(".section_header").append('<img class="icon" src="'+service.icon+'"><label>'+service.label+'</label>');
+    // and then show it
     media_section.show();
+    // show that the media content is loading
     $(".music").html("loading...");
+    // sends a request to the local server about the service library
     apiRequest("media/"+service.name+"/library", function (r) {
-        let media = r.media,
-            media_html = '',
-            sub_info = '';
+        let media = r.media, // media content
+            media_html = '', // final media html
+            sub_info = ''; // if there is a sub text like artist (not for playlists)
         for (let i in media){
             let item = media[i],
-                image = '';
-            console.log(item);
+                image = ''; // thumbnail for the media
             if (item.type === "album"){
-                image = '<img src="'+item.image+'">';
-                sub_info = '<h2>'+item.artist+'</h2>';
+                // album media type
+                image = '<img src="'+item.image+'">'; // image is just the url of the alb art
+                sub_info = '<h2>'+item.artist+'</h2>'; // sub text is just the artist
             } else if (item.type === "playlist"){
+                // playlist media type
+                sub_info = '<h2>'+item.items.toString()+' songs</h2>'; // amount of songs in the playlist
+                // image is 4 of the alb arts
                 image = '<div class="image_grid"><div class="image_row"><img src="'+item.images[0]+'"><img src="'+item.images[1]+'"></div><div class="image_row"><img src="'+item.images[2]+'"><img src="'+item.images[3]+'"></div> </div>';
             }
+            // appends the html to the full html
             media_html += '<div class="card music_item">'+image+'<div class="music_item_info"> <h1>'+item.name+'</h1>'+sub_info+'</div></div>';
         }
+        // sets the media html to the content
         $(".music").html(media_html);
+
+        // this part fixes the content information overhang so it fits inside the card
+        // gets all the media items > info
         let items = document.getElementsByClassName("music_item_info");
         for (let i in items){
             let item = items[i];
             if (typeof item == "object"){
-                let height = item.clientHeight;
+                // needs this because when it gets the elements, it also gets the functions as well,
+                // so you need to make sure they are objects
+                let height = item.clientHeight; // element height
+                // makes the margin top the - of the height of the object
                 item.style.marginTop = "-"+height.toString()+"px";
             }
         }
