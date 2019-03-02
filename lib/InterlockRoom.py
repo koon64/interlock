@@ -144,7 +144,7 @@ class Room:
                 lights_off += 1
         # speakers and displays
         for device in self.devices:
-            if device.type == "display" or device.type == "speaker":
+            if device.type == "speakers" or device.type == "display":
                 media = device.get_media()
                 if media is not None:
                     playing_media.append({
@@ -177,7 +177,7 @@ class Room:
                     status_string += ", and "
                 else:
                     status_string += ", "
-        status_string = status_string.capitalize()
+        status_string = status_string
         status_string += "."
         return status_string
 

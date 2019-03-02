@@ -23,6 +23,9 @@ class MediaService:
         self.playing = False
         self.paused = False
 
+    def __str__(self):
+        return "Playing" if self.playing and not self.paused else "Stopped"
+
     def start(self):
         print("starting")
         if self.device is not None:
@@ -54,6 +57,8 @@ class MediaService:
 
     def set_output(self, device):
         self.device = device
+        self.device.set_media_service(self)
+
 
     def play(self, media=None):
         self.paused = False
@@ -118,11 +123,19 @@ class MediaService:
             self.play_media(item)
             return item
 
+    def get_track(self):
+        return self.queue[self.queue_position]
+
     def run(self, command):
         if command is not None:
             if type(command) == Command:
                 if command.function_name == "pause":
                     self.device.pause()
 
-
-
+    def get_state(self):
+        if self.playing:
+            return "PLAYING"
+        elif self.paused:
+            return "PAUSED"
+        else:
+            return "STOPPED"

@@ -1,5 +1,6 @@
 import pychromecast
 from lib.InterlockStandardFormats import InterlockSong
+import random
 
 
 class ChromecastService:
@@ -27,9 +28,12 @@ class ChromecastDevice:
             self.type = "speakers"
         self.device.wait()
         self.mc = self.device.media_controller
+        self.media_service = None
 
     def __str__(self):
-        return "[ INTERLOCK DEVICE | "+self.product_name+" | "+self.label+" ]"
+        print(self.media_service)
+        print(type(self.media_service))
+        return "[ INTERLOCK DEVICE | "+self.product_name+" | "+self.label+" | "+str(self.media_service)+" ]"
 
     def play_media(self, url, type, title=None, image=None):
         self.mc.play_media(url, type, title, image)
@@ -64,11 +68,28 @@ class ChromecastDevice:
 
     def get_state(self):
         # todo: fix this, return PLAYING or PAUSED or STOPPED
-        status = self.mc.status
+        status = self.media_service.get_state()
+        print(status)
+        return status
+
+    def set_media_service(self, service):
+        self.media_service = service
+        print('music service is not')
+        print('serivce', service)
 
     def get_media(self):
+        if self.media_service is not None:
+            track = self.media_service.get_track()
+            print(self.label + 'is working, playing: ', track)
+            return track
+        else:
+            print(self.label+'\'s media service is not set')
+            return None
+
+    def get_media_old(self):
         if self.mc is not None:
             status = self.mc.status
+            print(status)
             title = status.title
             if title is not None:
                 if len(status.images) != 0:

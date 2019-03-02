@@ -65,7 +65,11 @@ h3#user_name {
 .main_header .right {
     text-align: right;
     width: 100%;
-    color: white;
+    color: #333;
+    padding-right: 40px;
+}
+.dark .main_header .right{
+    color: #fff;
 }
 p#room_info {
     color: #666;
@@ -396,6 +400,81 @@ label#scene_id {
 
 .card.music_item:hover > .image_grid {
     transform: scale(1.05);
+}
+h1#time {
+    margin: 0;
+    font-size: 70px;
+    font-weight: normal;
+}
+h2#date {
+    margin: 5px 0;
+    font-size: 20px;
+    font-weight: normal;
+}
+.notifications_container {
+    position: absolute;
+    right: 0;
+}
+
+.notification {
+    background: rgba(255,255,255,.9);
+    margin: 40px;
+    width: 16vw;
+    border-radius: 5px;
+    box-shadow: 0 20px 100px rgba(0,0,0,.1);
+    opacity: 0;
+    transform: scale(0.9);
+    transition: .3s ease;
+}
+
+span.notification_title {
+    font-size: 14px;
+    font-weight: bold;
+    color: #666;
+}
+
+button.close_notification {
+    background: none;
+    border: none;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    margin-top: 3px;
+    color: #999;
+}
+
+.notification_header {
+    padding: 5px 20px;
+    margin-bottom: 10px;
+}
+.notification_content {
+    padding: 0 20px 10px;
+}
+.notification.show{
+    opacity: 1;
+    transform: scale(1);
+}
+.notification_media_card img {
+    height: 50px;
+    border-radius: 5px;
+    box-shadow: 0 3px 10px rgba(0,0,0,.3);
+}
+
+.notification_media_card {
+    display: inline-flex;
+}
+
+.song_info > span {
+    display: block;
+    font-size: 16px;
+}
+
+.song_info > span.title {
+    font-weight: bold;
+}
+
+.song_info {
+    padding-left: 10px;
 }
 
 

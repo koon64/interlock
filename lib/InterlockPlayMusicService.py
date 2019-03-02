@@ -18,7 +18,7 @@ class PlayMusicService:
 
     def remove_special_characters(self, string):
         regex = compile('[^a-zA-Z]')
-        return regex.sub('', string)
+        return regex.sub('', string).lower()
 
     def get_albums(self):
         library = self.get_library()
