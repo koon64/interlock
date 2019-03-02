@@ -1,2 +1,6 @@
 .gitignore
 .idea/
+.idea
+__pycache__
+.app.py.un~
+ref.png
