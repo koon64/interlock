@@ -25,6 +25,7 @@ class SonosSpeaker:
         self.label = self.speaker_name
         self.id = self.speaker_name.replace("'", "")
         self.ip = speaker.ip_address
+        self.media_service = None
         try:
             self.track = speaker.get_current_track_info()
         finally:
@@ -49,9 +50,13 @@ class SonosSpeaker:
         self.play_uri(url)
 
     def get_media(self):
-        track = self.speaker.get_current_track_info()
-        print(track)
-        return InterlockSong(None, track['title'], track['album_art'], track['artist'], track['album'])
+        if self.media_service is not None:
+            track = self.media_service.get_track()
+            return track
+        else:
+            track = self.speaker.get_current_track_info()
+            print(track)
+            return InterlockSong(None, track['title'], track['album_art'], track['artist'], track['album'])
 
     def get_state(self):
         return self.speaker.get_current_transport_info()['current_transport_state']
@@ -64,6 +69,7 @@ class SonosSpeaker:
     def mute(self):
         self.volume(0)
 
-
+    def set_media_service(self, media_service):
+        self.media_service = media_service
 
 

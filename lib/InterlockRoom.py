@@ -177,7 +177,33 @@ class Room:
                     status_string += ", and "
                 else:
                     status_string += ", "
-        status_string = status_string
-        status_string += "."
+        status_string = status_string[0].capitalize()+status_string[1:]
+        if status_string[-1] != "." or status_string[-1] != "?" or status_string[-1] != "!":
+            status_string += "."
         return status_string
+
+    # returns bool if it is a scene
+    def is_scene(self, scene_name):
+        scene = self.get_scene(scene_name)
+        if scene is not None:
+            instructions = scene.instructions
+            scene_match = True
+            device_counter = 0
+            for device in self.devices:
+                device_instruction = instructions[device_counter]
+                if device_instruction.command is not None:
+                    if not device_instruction.match(device):
+                        scene_match = False
+                device_counter += 1
+            print('match:', scene_match)
+            return scene_match
+        else:
+            return None
+
+    # returns the scene id of the room
+    def get_current_scene(self):
+        for scene in self.scenes:
+            if self.is_scene(scene.id):
+                return scene
+        return None
 

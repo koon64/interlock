@@ -40,6 +40,10 @@ class Interlock:
         self.sonos = SonosService
         self.hue = HueService
         self.chromecast = ChromecastService
+
+        # idk
+        self.hue_instance = None
+
         # object variables
         self.rooms = []
         self.scenes = []
@@ -101,9 +105,9 @@ class Interlock:
                         services_to_create = config['services']
                         for service in services_to_create:
                             if service['service_name'] == 'hue':
-                                hue = self.hue(service['bridge_ip'])
+                                self.hue_instance = self.hue(service['bridge_ip'])
                                 lights_to_assign_to_rooms = service['rooms']
-                                for light in hue.lights:
+                                for light in self.hue_instance.lights:
                                     for room_name in lights_to_assign_to_rooms:
                                         room_lights = lights_to_assign_to_rooms[room_name]
                                         if light.id in room_lights:
@@ -185,3 +189,7 @@ class Interlock:
 
     def get_media_services(self):
         return self.media_services
+
+    def refresh_hue(self):
+        self.hue_instance.refresh_lights()
+

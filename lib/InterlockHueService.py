@@ -21,7 +21,11 @@ class HueService:
         return self.lights
 
     def refresh_lights(self):
+        print('refreshing lights')
         self.hue_info = self.bridge.get_api()
+        for light_numb in range(0, len(self.lights)):
+            self.lights[light_numb].refresh()
+
 
 
 class HueLight:
@@ -50,6 +54,9 @@ class HueLight:
         self.turn_on()
         self.bridge.set_light(self.id, 'xy', [x, y])
 
+    def get_xy(self):
+        return self.xy
+
     def set_state(self, state):
         if state == 1:
             state = True
@@ -69,10 +76,19 @@ class HueLight:
         self.bridge.set_light(self.id, 'bri', brightness)
 
     def refresh(self):
-        self.hue_obj.refresh_lights()
+        lights = self.hue_obj.hue_info['lights']
+        for light_id in lights:
+            if light_id == str(self.id):
+                light = lights[light_id]
+                self.on = light['state']['on']
+                self.reachable = light['state']['reachable']
+                self.xy = light['state']['xy']
+                self.get_color()
+                self.red, self.green, self.blue = self.get_color()
+                self.brightness = light['state']['bri'] / 255
 
     def get_state(self):
-        self.refresh()
+        # self.refresh()
         lights = self.hue_obj.hue_info['lights']
         for light_id in lights:
             if light_id == str(self.id):

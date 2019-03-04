@@ -530,7 +530,7 @@ function ambientService() {
 
 // create a notification
 
-function createNotification(title, content){
+function createNotification(title, content, timeoutSeconds=10){
     // defines some variables
     let notification_id = Math.floor(Math.random() * 10000), // random notification id
         notification_html = '<div data-notification_id="'+notification_id.toString()+'" class="notification"><div class="notification_header"><span class="notification_title">'+title+'</span><button class="close_notification">x</button></div><div class="notification_content">'+content+'</div> </div>'
@@ -545,7 +545,7 @@ function createNotification(title, content){
         // waits 10 sec till it closes
         setTimeout(function () {
             closeNotification(notification_id);
-        }, (1000 * 10))
+        }, (1000 * timeoutSeconds))
     }, 100);
     // click event for the close button
     $(".close_notification").click(function () {

@@ -7,6 +7,7 @@ import random
 
 interlock = il.Interlock('./lib/InterlockConfig.json', True)
 
+
 rooms = interlock.get_rooms()
 media_service = MediaService()
 
@@ -16,6 +17,11 @@ class Serv(BaseHTTPRequestHandler):
     def GetRoom(self, room):
         room_devices = self.GetDevices(room)
         room_scenes = self.GetScenes(room)
+        current_scene = room.get_current_scene()
+        if current_scene is not None:
+            current_scene = current_scene.id
+        else:
+            current_scene = "off"
         this_room = {
             "id": room.room_name,
             "label": room.room_label,
@@ -25,7 +31,8 @@ class Serv(BaseHTTPRequestHandler):
             "devices": room_devices,
             "scenes": room_scenes,
             "svg": room.svg,
-            "status_string": room.get_status_string()
+            "status_string": room.get_status_string(),
+            "current_scene": current_scene
         }
         return this_room
 
@@ -100,6 +107,7 @@ class Serv(BaseHTTPRequestHandler):
         print(url_parts)
         if len(url_parts) > 2:
             if url_parts[2] == 'rooms':
+                interlock.refresh_hue()
                 if len(url_parts) == 3:
                     rooms_return = []
                     for room in rooms:
@@ -136,14 +144,15 @@ class Serv(BaseHTTPRequestHandler):
                             if room.get_scene(url_parts[4]) is not None:
                                 scene = room.get_scene(url_parts[4])
                                 scene.run()
+                                response = {"msg": "room set to " + url_parts[4]}
                             if url_parts[4] == "create_scene":
                                 scene_name = url_parts[5]
                                 scene = room.create_scene(scene_name)
-
-
+                                response = {"msg": scene.label + " is created"}
                     else:
                         response = "unknown room"
             elif url_parts[2] == 'devices':
+                interlock.refresh_hue()
                 if len(url_parts) == 3:
                     pass
                 elif len(url_parts) >= 4:

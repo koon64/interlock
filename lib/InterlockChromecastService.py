@@ -31,8 +31,6 @@ class ChromecastDevice:
         self.media_service = None
 
     def __str__(self):
-        print(self.media_service)
-        print(type(self.media_service))
         return "[ INTERLOCK DEVICE | "+self.product_name+" | "+self.label+" | "+str(self.media_service)+" ]"
 
     def play_media(self, url, type, title=None, image=None):

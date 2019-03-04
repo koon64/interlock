@@ -5,7 +5,7 @@ import json
 import random
 
 
-interlock = il.Interlock('./lib/InterlockConfig.json', True)
+interlock = il.Interlock('./lib/InterlockConfigDads.json', True)
 
 rooms = interlock.get_rooms()
 media_service = MediaService()
@@ -24,7 +24,8 @@ class Serv(BaseHTTPRequestHandler):
             "on": room.lights_on(),
             "devices": room_devices,
             "scenes": room_scenes,
-            "svg": room.svg
+            "svg": room.svg,
+            "status_string": room.get_status_string()
         }
         return this_room
 
@@ -164,44 +165,63 @@ class Serv(BaseHTTPRequestHandler):
                                 if device.type == "speakers" or device.type == "display":
                                     if len(url_parts) > 6:
                                         service = None
+                                        service_type = None
                                         if url_parts[5] == 'google_play':
                                             service = interlock.play_music
                                             service_type = 'audio'
                                         if service is not None:
                                             shuffle = False
                                             songs = None
+                                            create_music_objs = True
                                             if url_parts[6] == 'library':
-                                                songs = service.get_library()
-                                                shuffle = True
+                                                if service_type == 'audio':
+                                                    songs = service.get_library()
+                                                    shuffle = True
                                             elif url_parts[6] == 'album':
-                                                if len(url_parts) > 7:
-                                                    album_name = url_parts[7]
-                                                    songs = service.get_album(album_name).songs
-                                                else:
-                                                    response = "album name must be set after '/album/NAME'"
+                                                if service_type == 'audio':
+                                                    if len(url_parts) > 7:
+                                                        album_name = url_parts[7]
+                                                        album = service.get_album(album_name)
+                                                        if album is not None:
+                                                            create_music_objs = False
+                                                            songs = album.songs
+                                                        else:
+                                                            response = "UNKNOWN_ALB"
+                                                    else:
+                                                        response = "album name must be set after '/album/NAME'"
                                             elif url_parts[6] == 'playlist':
-                                                if len(url_parts) > 7:
-                                                    playlist_name = url_parts[7]
-                                                    songs = service.get_playlist(playlist_name).songs
-                                                else:
-                                                    response = "playlist name must be set after '/playlist/NAME' (must be exact)"
+                                                if service_type == 'audio':
+                                                    if len(url_parts) > 7:
+                                                        playlist_name = url_parts[7]
+                                                        playlist = service.get_playlist(playlist_name)
+                                                        if playlist is not None:
+                                                            create_music_objs = False
+                                                            songs = playlist.songs
+                                                        else:
+                                                            response = "UNKNOWN_PL"
+                                                    else:
+                                                        response = "playlist name must be set after '/playlist/NAME'" \
+                                                                   " (must be exact)"
+                                            else:
+                                                response = 'invalid media type'
                                             if songs is not None:
-                                                media_list = service.create_track_objs(songs)
+                                                if create_music_objs:
+                                                    media_list = service.create_track_objs(songs)
+                                                else:
+                                                    media_list = songs
                                                 if shuffle:
-                                                    randon.shuffle(media_list)
+                                                    random.shuffle(media_list)
                                                 song = media_list[0]
                                                 title = song.title
                                                 artist = song.artist
                                                 image = song.image
-                                                media_service.set_output(device)
-                                                media_service.start()
+                                                if not media_service.active:
+                                                    media_service.set_output(device)
+                                                    media_service.start()
                                                 media_service.play(media_list)
-                                                url = song.get_url()
                                                 response = {"song": {"title": title, "artist": artist, "image": image}}
-                                            else:
-                                                response = "invalid media type"
                                         else:
-                                            response = 'invalid music provider'
+                                            response = "invalid media service"
                                     else:
                                         media_service.play()
                                         response = {"msg": "device resumed"}
@@ -287,7 +307,8 @@ class Serv(BaseHTTPRequestHandler):
                                         media.append({
                                             "type": "playlist",
                                             "name": playlist.name,
-                                            "images": playlist.thumbnails
+                                            "images": playlist.thumbnails,
+                                            "items": len(playlist.songs)
                                         })
                                     response = {"media": media}
                     if not valid_service:

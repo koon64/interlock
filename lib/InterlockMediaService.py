@@ -91,12 +91,14 @@ class MediaService:
             self.playing = True
             try:
                 self.play_to_device(url)
-            except:
+            except Exception as e:
+                print(e)
                 print("STILL GIVING A FUCKING ERROR")
 
     def play_to_device(self, url):
         if self.device.service == "sonos":
-            print("trying to play", url)
+            url = url.replace('http://', 'https://')
+            url = url.replace('https://', 'x-rincon-mp3radio://')
             self.device.play_uri(url)
         elif self.device.service == "chromecast":
             self.device.play_audio(url)
