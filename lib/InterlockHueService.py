@@ -116,9 +116,9 @@ class HueLight:
                     y = r * 0.234327 + g * 0.743075 + b * 0.022598
                     z = g * 0.053077 + b * 1.035763
                     X = x / (x+y+z)
-                    X = y / (x+y+z)
+                    Y = y / (x+y+z)
                     self.turn_on()
-                    self.bridge.set_light(self.id, 'xy', [X,X])
+                    self.bridge.set_light(self.id, 'xy', [X,Y])
                     return True
 
     def get_color(self):
